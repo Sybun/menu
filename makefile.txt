@@ -1,0 +1,63 @@
+# Restaurant Menu Manager build script.
+# Usage: make -f makefile.txt <target>
+# Targets:
+#   module    compile all module source files to object files
+#   demo      build the demo executable
+#   run       run the demo
+#   test      build the test executable
+#   run_test  run the tests
+#   clean     remove every generated file
+#   rebuild   clean and rebuild everything from scratch
+
+CXX      = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
+
+MODULE_OBJS = MenuItem.o FoodItem.o DrinkItem.o SpecialItem.o \
+              SortStrategy.o Menu.o
+
+module: $(MODULE_OBJS)
+
+MenuItem.o: MenuItem.cpp MenuItem.h
+	$(CXX) $(CXXFLAGS) -c MenuItem.cpp -o MenuItem.o
+
+FoodItem.o: FoodItem.cpp MenuItem.h
+	$(CXX) $(CXXFLAGS) -c FoodItem.cpp -o FoodItem.o
+
+DrinkItem.o: DrinkItem.cpp MenuItem.h
+	$(CXX) $(CXXFLAGS) -c DrinkItem.cpp -o DrinkItem.o
+
+SpecialItem.o: SpecialItem.cpp MenuItem.h
+	$(CXX) $(CXXFLAGS) -c SpecialItem.cpp -o SpecialItem.o
+
+SortStrategy.o: SortStrategy.cpp SortStrategy.h MenuItem.h
+	$(CXX) $(CXXFLAGS) -c SortStrategy.cpp -o SortStrategy.o
+
+Menu.o: Menu.cpp Menu.h MenuItem.h SortStrategy.h
+	$(CXX) $(CXXFLAGS) -c Menu.cpp -o Menu.o
+
+demo: demo.o $(MODULE_OBJS)
+	$(CXX) $(CXXFLAGS) -o demo demo.o $(MODULE_OBJS)
+
+demo.o: demo.cpp MenuItem.h Menu.h SortStrategy.h
+	$(CXX) $(CXXFLAGS) -c demo.cpp -o demo.o
+
+run: demo
+	./demo
+
+test: test_runner
+
+test_runner: test.o $(MODULE_OBJS)
+	$(CXX) $(CXXFLAGS) -o test_runner test.o $(MODULE_OBJS)
+
+test.o: test.cpp MenuItem.h Menu.h SortStrategy.h
+	$(CXX) $(CXXFLAGS) -c test.cpp -o test.o
+
+run_test: test
+	./test_runner
+
+clean:
+	rm -f *.o demo test_runner
+
+rebuild: clean module demo test
+
+.PHONY: module demo run test run_test clean rebuild
