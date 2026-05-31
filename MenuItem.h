@@ -1,3 +1,6 @@
+//AI tools by Anthropic were used in the creation of this project
+
+
 #pragma once
 #include <string>
 #include <stdexcept>
