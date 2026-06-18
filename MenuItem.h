@@ -7,21 +7,27 @@
 
 class NotImplementedException : public std::logic_error {
 public:
-    NotImplementedException() : std::logic_error("Method not implemented") {}
+    NotImplementedException();
 };
 
 class StrategyNotSet : public std::runtime_error {
 public:
-    StrategyNotSet() : std::runtime_error("Sort strategy not set") {}
+    StrategyNotSet();
 };
 
 /// Abstract base class for any item on the restaurant menu.
 /// display() is the polymorphic method overridden by each subclass.
 /// clone() implements the Prototype pattern for polymorphic copying.
 class MenuItem {
+protected:
+    std::string name;
+    double      price;
+
 public:
     MenuItem(const std::string& name, double price);
     virtual ~MenuItem() = default;
+
+    MenuItem& operator=(const MenuItem&) = delete;
 
     virtual MenuItem* clone() const = 0;
     virtual void display() const;   // base version throws NotImplementedException
@@ -33,12 +39,14 @@ public:
     bool operator<(const MenuItem& other) const;
 
 protected:
-    std::string name;
-    double      price;
+    MenuItem(const MenuItem&) = default;
 };
 
 /// A food dish with an ingredient list.
 class FoodItem : public MenuItem {
+private:
+    std::string ingredients;
+
 public:
     FoodItem(const std::string& name, double price, const std::string& ingredients);
 
@@ -48,11 +56,15 @@ public:
     std::string getIngredients() const;
 
 private:
-    std::string ingredients;
+    FoodItem(const FoodItem&) = default;
 };
 
 /// A beverage with volume (ml) and alcohol percentage.
 class DrinkItem : public MenuItem {
+private:
+    int    volumeMl;
+    double alcoholPercent;
+
 public:
     DrinkItem(const std::string& name, double price, int volumeMl, double alcoholPercent);
 
@@ -63,13 +75,15 @@ public:
     double getAlcoholPercent() const;
 
 private:
-    int    volumeMl;
-    double alcoholPercent;
+    DrinkItem(const DrinkItem&) = default;
 };
 
 /// Chef's specials, seasonal dishes, limited-availability items.
 /// DECLARED here only — see SpecialItem.cpp for the implementation description.
 class SpecialItem : public MenuItem {
+private:
+    std::string description;
+
 public:
     SpecialItem(const std::string& name, double price, const std::string& description);
 
@@ -79,5 +93,5 @@ public:
     std::string getSpecialDescription() const;
 
 private:
-    std::string description;
+    SpecialItem(const SpecialItem&) = default;
 };
