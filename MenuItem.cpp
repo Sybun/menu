@@ -1,5 +1,11 @@
 #include "MenuItem.h"
 
+NotImplementedException::NotImplementedException()
+    : std::logic_error("Method not implemented") {}
+
+StrategyNotSet::StrategyNotSet()
+    : std::runtime_error("Sort strategy not set") {}
+
 MenuItem::MenuItem(const std::string& name, double price)
     : name(name), price(price) {}
 
