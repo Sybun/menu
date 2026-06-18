@@ -11,6 +11,9 @@ struct MenuImpl;  // pimpl — defined in Menu.cpp
 /// Owns every item it stores.  State is hidden via pimpl (MenuImpl).
 /// Provides CRUD, Strategy-pattern sorting, callbacks, and a ForwardIterator.
 class Menu {
+private:
+    std::unique_ptr<MenuImpl> impl;
+
 public:
     Menu();
     Menu(const Menu& other);
@@ -30,12 +33,15 @@ public:
     void displayAll() const;
 
     class ForwardIterator {
+    private:
+        std::vector<MenuItem*>::iterator it;
+
     public:
         using value_type        = MenuItem*;
         using difference_type   = std::ptrdiff_t;
-        using pointer           = MenuItem**;
-        using reference         = MenuItem*&;
-        using iterator_category = std::forward_iterator_tag;
+        using pointer            = MenuItem**;
+        using reference          = MenuItem*&;
+        using iterator_category  = std::forward_iterator_tag;
 
         ForwardIterator();
         explicit ForwardIterator(std::vector<MenuItem*>::iterator it);
@@ -46,14 +52,8 @@ public:
         ForwardIterator  operator++(int);
         bool operator==(const ForwardIterator& other) const;
         bool operator!=(const ForwardIterator& other) const;
-
-    private:
-        std::vector<MenuItem*>::iterator it;
     };
 
     ForwardIterator begin();
     ForwardIterator end();
-
-private:
-    std::unique_ptr<MenuImpl> impl;
 };
